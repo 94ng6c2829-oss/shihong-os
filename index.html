@@ -1,0 +1,120 @@
+<!doctype html><html lang="zh-Hant"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07101d"><meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="世弘 OS">
+<link rel="manifest" href="./manifest.json"><link rel="apple-touch-icon" href="./icon-180.png">
+<title>世弘 OS 3.0</title>
+<style>
+:root{--bg:#07101d;--card:#111a2b;--text:#f8fafc;--muted:#9fb0c8;--line:rgba(255,255,255,.08);--blue:#60a5fa;--violet:#8b5cf6;--good:#34d399;--warn:#fbbf24;--bad:#fb7185}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif;background:radial-gradient(circle at 0 0,rgba(96,165,250,.12),transparent 28%),radial-gradient(circle at 100% 0,rgba(139,92,246,.11),transparent 25%),var(--bg);color:var(--text)}
+button,input,select{font:inherit}.app{max-width:1150px;margin:auto;padding:calc(16px + env(safe-area-inset-top)) 14px calc(105px + env(safe-area-inset-bottom))}
+.top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}h1{font-size:27px;margin:0}.sub,.muted{color:var(--muted)}.sub{font-size:13px;margin-top:4px}.pill{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:8px 10px;color:var(--muted)}
+.hero,.card{background:rgba(17,26,43,.93);border:1px solid var(--line);border-radius:24px;padding:18px}.hero{background:linear-gradient(145deg,rgba(96,165,250,.14),rgba(139,92,246,.12));box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.heroGrid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}.score{font-size:68px;font-weight:850;line-height:1;background:linear-gradient(90deg,#7dd3fc,#fff,#c4b5fd);-webkit-background-clip:text;color:transparent}
+.label{font-size:11px;color:var(--muted);letter-spacing:.09em;text-transform:uppercase}.hero h2{margin:8px 0}.hero p{color:var(--muted);line-height:1.6}
+.mini{display:grid;grid-template-columns:1fr 1fr;gap:9px}.miniCard{background:rgba(0,0,0,.15);border:1px solid var(--line);border-radius:17px;padding:13px}.miniCard b{display:block;font-size:20px;margin-top:4px}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px;margin-top:14px}.card{grid-column:span 4}.wide{grid-column:span 8}.full{grid-column:1/-1}.card h3{margin:0 0 4px;font-size:18px}.desc{font-size:13px;color:var(--muted);margin-bottom:13px}
+.row{display:flex;gap:10px;align-items:center}.between{justify-content:space-between}.wrap{flex-wrap:wrap}.btn{border:1px solid var(--line);background:#18253c;color:white;border-radius:14px;padding:10px 12px;cursor:pointer}.btn.primary{border:0;background:linear-gradient(90deg,#2563eb,#7c3aed)}.btn.ghost{background:transparent}
+input,select{width:100%;background:#0b1524;color:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 11px}label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}.form2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.metric{font-size:29px;font-weight:800}.bar{height:10px;background:#08111f;border:1px solid var(--line);border-radius:999px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--violet))}
+.item,.bubble,.box{padding:12px;border-radius:15px;background:#0d1727;border:1px solid var(--line)}.list{display:grid;gap:9px}.item{display:flex;justify-content:space-between;gap:10px;align-items:center}.item small{display:block;color:var(--muted);margin-top:3px}.tag{font-size:11px;padding:5px 8px;border-radius:999px;background:#1c2942}.good{color:#86efac}.warn{color:#fde68a}.bad{color:#fda4af}
+.mc{font-size:48px;font-weight:850}.chart{display:flex;align-items:end;height:155px;gap:4px;margin-top:12px}.chart span{flex:1;min-width:3px;background:linear-gradient(#7dd3fc,#7c3aed);border-radius:6px 6px 2px 2px}
+.chat{display:grid;gap:10px;max-height:430px;overflow:auto;padding-right:4px}.bubble{max-width:88%;line-height:1.55}.ai{justify-self:start}.me{justify-self:end;background:#172b49}.correction{font-size:12px;color:#fde68a;margin-top:5px}
+.tabs{position:fixed;z-index:50;left:50%;bottom:10px;transform:translateX(-50%);display:flex;gap:5px;padding:6px;background:rgba(9,16,29,.9);backdrop-filter:blur(18px);border:1px solid var(--line);border-radius:20px}.tab{border:0;background:transparent;color:var(--muted);padding:10px 11px;border-radius:14px;font-size:12px}.tab.active{background:#1b2942;color:#fff}.section{display:none}.section.active{display:block}
+@media(max-width:800px){.heroGrid{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.card,.wide,.full{grid-column:auto}.tabs{width:calc(100% - 18px);justify-content:space-around}.tab{padding:10px 7px}.score{font-size:58px}.mc{font-size:42px}}
+</style></head><body><div class="app">
+<header class="top"><div><h1>世弘 OS 3.0</h1><div class="sub" id="date"></div></div><div class="pill">● Offline Ready</div></header>
+
+<section id="home" class="section active">
+<div class="hero"><div class="heroGrid"><div><div class="label">Personal Freedom Score</div><div class="score" id="score">—</div><h2 id="headline">計算中</h2><p>首頁只回答三件事：離退休多遠、退休夠不夠安全、今天該做什麼。</p><div class="row wrap"><button class="btn primary" onclick="tab('finance')">跑退休模擬</button><button class="btn" onclick="tab('english')">開始英文對話</button></div></div>
+<div class="mini"><div class="miniCard"><span class="label">資產</span><b id="hAsset">—</b></div><div class="miniCard"><span class="label">退休</span><b id="hYears">—</b></div><div class="miniCard"><span class="label">成功率</span><b id="hMC">—</b></div><div class="miniCard"><span class="label">英文</span><b id="hEng">—</b></div></div></div></div>
+<div class="grid"><div class="card wide"><h3>今天最重要的三件事</h3><div class="desc">依目前設定自動產生。</div><div class="list" id="actions"></div></div>
+<div class="card"><h3>退休到 95 歲</h3><div class="desc">預設以 45 歲退休、50 年退休期思考。</div><div class="box"><b>為什麼不是只看平均報酬？</b><br><span class="muted">因為退休最怕的是報酬順序風險：退休初期先遇到大跌。</span></div></div></div>
+</section>
+
+<section id="finance" class="section"><div class="grid">
+<div class="card wide"><h3>Monte Carlo 退休實驗室</h3><div class="desc">在瀏覽器直接模擬 5,000 條市場路徑。這是規劃工具，不是報酬保證。</div>
+<div class="form2">
+<div><label>目前資產（萬元）</label><input id="asset" type="number" value="1500"></div>
+<div><label>每月投入（萬元）</label><input id="monthly" type="number" value="6" step=".5"></div>
+<div><label>目前年齡</label><input id="age" type="number" value="41"></div>
+<div><label>退休年齡</label><input id="retireAge" type="number" value="45"></div>
+<div><label>退休年支出（萬元）</label><input id="spend" type="number" value="54"></div>
+<div><label>模擬到幾歲</label><input id="endAge" type="number" value="95"></div>
+<div><label>實質平均報酬（%）</label><input id="mean" type="number" value="5" step=".5"></div>
+<div><label>年波動率（%）</label><input id="vol" type="number" value="16" step="1"></div>
+</div><button class="btn primary" style="margin-top:12px" onclick="runMC()">重新跑 5,000 次</button>
+<div class="row between" style="margin-top:18px"><div><span class="label">退休成功率</span><div class="mc" id="mcRate">—</div></div><div style="text-align:right"><span class="label">退休起始資產</span><div class="metric" id="startRetire">—</div></div></div>
+<div class="bar"><i id="mcBar" style="width:0"></i></div><div class="desc" id="mcText" style="margin-top:10px"></div>
+<div class="chart" id="mcChart"></div></div>
+<div class="card"><h3>結果分布</h3><div class="desc">95 歲時剩餘資產。</div><div class="list" id="percentiles"></div></div>
+<div class="card"><h3>退休年齡比較</h3><div class="desc">同一組假設，快速比較。</div><div class="list" id="ageCompare"></div></div>
+<div class="card wide"><h3>退休首年股災</h3><div class="desc">先對退休資產施加一次性跌幅，再跑後續隨機報酬。</div><div class="row wrap"><button class="btn" onclick="crashTest(.2)">-20%</button><button class="btn" onclick="crashTest(.3)">-30%</button><button class="btn" onclick="crashTest(.4)">-40%</button><button class="btn" onclick="crashTest(.5)">-50%</button></div><div class="box" id="crashResult" style="margin-top:10px">選一個跌幅。</div></div>
+</div></section>
+
+<section id="english" class="section"><div class="grid">
+<div class="card"><h3>英文教練</h3><div class="desc">選場景。這版會依常見初階錯誤做即時規則式糾正。</div>
+<label>場景</label><select id="scene" onchange="startChat()"><option>咖啡店</option><option>餐廳</option><option>購物</option><option>飯店</option><option>機場</option></select>
+<div class="list" style="margin-top:12px"><div class="item"><span>完成對話</span><b id="sessions">0</b></div><div class="item"><span>常犯錯誤</span><b id="errors">0</b></div><div class="item"><span>連續學習</span><b id="streak">0 天</b></div></div></div>
+<div class="card wide"><h3>10 分鐘口說</h3><div class="desc">請用英文輸入你會說的話；介面會繼續情境並糾正常見錯誤。</div><div class="chat" id="chat"></div>
+<div class="row" style="margin-top:10px"><input id="reply" placeholder="用英文回答…" onkeydown="if(event.key==='Enter')sendReply()"><button class="btn primary" onclick="sendReply()">送出</button></div>
+<div class="row wrap" style="margin-top:8px"><button class="btn ghost" onclick="hint()">提示</button><button class="btn ghost" onclick="finishChat()">完成今天練習</button></div></div>
+<div class="card full"><h3>錯誤筆記</h3><div class="desc">只記你真的犯過的常見錯誤。</div><div class="list" id="errorList"></div></div>
+</div></section>
+
+<section id="settings" class="section"><div class="grid"><div class="card full"><h3>App / PWA</h3><div class="desc">已包含 App icon、manifest、Service Worker 與離線快取。</div><div class="box">iPhone 完整安裝方式：把資料夾部署到 HTTPS 網站後，用 Safari 開啟 → 分享 → 加入主畫面。<br><br><span class="muted">ChatGPT 內的檔案預覽可以操作介面，但真正 PWA 安裝仍需要 HTTPS 網址。</span></div><div class="row wrap" style="margin-top:10px"><button class="btn" onclick="exportData()">匯出個人資料</button><button class="btn ghost" onclick="resetData()">重設</button></div></div></div></section>
+</div>
+<nav class="tabs"><button class="tab active" data-id="home" onclick="tab('home')">首頁</button><button class="tab" data-id="finance" onclick="tab('finance')">退休</button><button class="tab" data-id="english" onclick="tab('english')">英文</button><button class="tab" data-id="settings" onclick="tab('settings')">設定</button></nav>
+<script>
+const $=x=>document.getElementById(x);
+let S=JSON.parse(localStorage.getItem('shihong3')||'null')||{asset:1500,monthly:6,age:41,retireAge:45,spend:54,endAge:95,mean:5,vol:16,mc:0,english:{sessions:0,streak:0,last:null,errors:[]}};
+const scenes={
+'咖啡店':[{ai:'Hi! What can I get for you?',hint:"I'll have a large latte, please."},{ai:'Sure. What size would you like?',hint:'Large, please.'},{ai:'Anything else?',hint:"That's it, thanks."},{ai:'Will that be cash or card?',hint:'Card, please.'}],
+'餐廳':[{ai:'Hi! How many people?',hint:'A table for two, please.'},{ai:'Are you ready to order?',hint:"Yes. I'll have the chicken."},{ai:'Anything to drink?',hint:'Water, please.'}],
+'購物':[{ai:'Hi! Can I help you?',hint:"Yes. Do you have this in XL?"},{ai:'Sure. Would you like to try it on?',hint:'Yes, please.'},{ai:'How does it fit?',hint:'It fits well.'}],
+'飯店':[{ai:'Welcome. How can I help you?',hint:'Hi, I have a reservation under Shihong.'},{ai:'May I see your passport?',hint:'Sure. Here you go.'},{ai:'Would you like one key or two?',hint:'Two keys, please.'}],
+'機場':[{ai:'Hello. Where are you flying today?',hint:"I'm flying to Tokyo."},{ai:'May I see your passport?',hint:'Sure. Here you go.'},{ai:'Do you have any bags to check?',hint:'Yes, one bag.'}]
+};
+let step=0,lastMC=null;
+function save(){localStorage.setItem('shihong3',JSON.stringify(S))}
+function tab(id){document.querySelectorAll('.section').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.id===id));$(id).classList.add('active');scrollTo({top:0,behavior:'smooth'})}
+function normal(){let u=1-Math.random(),v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
+function futureAsset(a,m,years,rate){a*=10000;m*=10000;let r=rate/100/12;for(let i=0;i<years*12;i++)a=a*(1+r)+m;return a/10000}
+function sim(retAge,crash=0,n=5000){
+ let start=futureAsset(S.asset,S.monthly,Math.max(0,retAge-S.age),S.mean),yrs=Math.max(1,S.endAge-retAge),success=0,ends=[];
+ for(let j=0;j<n;j++){let a=start*(1-crash);for(let y=0;y<yrs;y++){let r=(S.mean+S.vol*normal())/100;a=a*(1+r)-S.spend;if(a<=0){a=0;break}}if(a>0)success++;ends.push(a)}
+ ends.sort((a,b)=>a-b);return{rate:success/n*100,start,ends}
+}
+function read(){['asset','monthly','age','retireAge','spend','endAge','mean','vol'].forEach(k=>S[k]=+$((k)).value||0);save()}
+function runMC(){
+ read();lastMC=sim(S.retireAge);S.mc=lastMC.rate;save();
+ $('mcRate').textContent=lastMC.rate.toFixed(1)+'%';$('startRetire').textContent='NT$'+lastMC.start.toFixed(0)+' 萬';$('mcBar').style.width=lastMC.rate+'%';
+ $('mcText').textContent=lastMC.rate>=90?'此假設下安全邊際較高，但仍應保留現金緩衝與動態支出能力。':lastMC.rate>=75?'可行性不低，但退休初期的市場順序風險仍值得管理。':'這組假設的失敗路徑偏多，延後退休、降低支出或提高起始資產會明顯改善。';
+ const p=q=>lastMC.ends[Math.floor((lastMC.ends.length-1)*q)];
+ $('percentiles').innerHTML=[[.1,'較差 10%'],[.5,'中位數'],[.9,'較佳 10%']].map(x=>`<div class="item"><span>${x[1]}</span><b>${p(x[0]).toFixed(0)} 萬</b></div>`).join('');
+ let sample=[];for(let i=0;i<30;i++)sample.push(lastMC.ends[Math.floor(i/29*(lastMC.ends.length-1))]);let max=Math.max(...sample,1);$('mcChart').innerHTML=sample.map(v=>`<span style="height:${Math.max(5,Math.min(100,v/max*100))}%"></span>`).join('');
+ compareAges();home();
+}
+function compareAges(){$('ageCompare').innerHTML=[45,48,50].map(a=>{let r=sim(a,0,1500);return `<div class="item"><div><b>${a} 歲</b><small>起始 ${r.start.toFixed(0)} 萬</small></div><span class="${r.rate>=90?'good':r.rate>=75?'warn':'bad'}"><b>${r.rate.toFixed(1)}%</b></span></div>`}).join('')}
+function crashTest(c){read();let r=sim(S.retireAge,c,3000);$('crashResult').innerHTML=`退休第一年先跌 <b>${Math.round(c*100)}%</b>：後續模擬成功率約 <b class="${r.rate>=80?'good':'bad'}">${r.rate.toFixed(1)}%</b>。`}
+function home(){let target=S.spend/.035*100,prog=Math.min(1,S.asset/target),score=Math.round(Math.min(98,55+prog*38));$('score').textContent=score;$('headline').textContent=score>=85?'工作正在從必要變成選項':score>=75?'退休安全邊際正在成形':'繼續拉高安全邊際';$('hAsset').textContent='NT$'+(S.asset/100).toFixed(1)+'M';$('hYears').textContent=Math.max(0,S.retireAge-S.age)+' 年';$('hMC').textContent=S.mc?S.mc.toFixed(0)+'%':'待模擬';$('hEng').textContent=S.english.streak+' 天';$('actions').innerHTML=[`完成今天 10 分鐘英文口說`,`跑一次退休情境，確認成功率是否仍在可接受範圍`,`今天的消費優先買「時間與體驗」，不是增加閒置物品`].map((x,i)=>`<div class="item"><b>0${i+1}</b><small>${x}</small></div>`).join('')}
+function addBubble(text,who,cor=''){let d=document.createElement('div');d.className='bubble '+who;d.innerHTML=text+(cor?`<div class="correction">${cor}</div>`:'');$('chat').appendChild(d);$('chat').scrollTop=$('chat').scrollHeight}
+function startChat(){$('chat').innerHTML='';step=0;let s=scenes[$('scene').value];addBubble(s[0].ai,'ai')}
+function correction(t){
+ let low=t.toLowerCase().trim(),c='';
+ if(/\bi want (a|an|the)\b/.test(low))c='更自然：點餐時可用 “I’ll have …”';
+ else if(/\boriginal milk\b/.test(low))c='「一般牛奶」通常說 “regular milk”，不是 original milk。';
+ else if(low==='card'||low==='card.')c='可以，但完整說 “Card, please.” 更自然。';
+ else if(/\bi want i'll\b/.test(low))c='不要把 “I want” 和 “I’ll have” 接在一起；選一個即可。';
+ if(c&&!S.english.errors.includes(c)){S.english.errors.push(c);save();renderErrors()}return c
+}
+function sendReply(){let t=$('reply').value.trim();if(!t)return;addBubble(t,'me',correction(t));$('reply').value='';let s=scenes[$('scene').value];step++;setTimeout(()=>{if(step<s.length)addBubble(s[step].ai,'ai');else addBubble('Great. You finished this conversation.','ai')},250)}
+function hint(){let s=scenes[$('scene').value];addBubble('提示：'+s[Math.min(step,s.length-1)].hint,'ai')}
+function finishChat(){let today=new Date().toISOString().slice(0,10);if(S.english.last!==today){if(S.english.last){let d=Math.round((new Date(today)-new Date(S.english.last))/86400000);S.english.streak=d===1?S.english.streak+1:1}else S.english.streak=1;S.english.last=today;S.english.sessions++;save()}renderEnglish();home();addBubble('今天完成。明天再練 10 分鐘。','ai')}
+function renderErrors(){$('errorList').innerHTML=S.english.errors.length?S.english.errors.map(x=>`<div class="item"><small>${x}</small></div>`).join(''):'<div class="muted">目前沒有錯誤紀錄。</div>'}
+function renderEnglish(){$('sessions').textContent=S.english.sessions;$('errors').textContent=S.english.errors.length;$('streak').textContent=S.english.streak+' 天';renderErrors()}
+function exportData(){let b=new Blob([JSON.stringify(S,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='shihong-os-v3-data.json';a.click()}
+function resetData(){if(confirm('確定重設？')){localStorage.removeItem('shihong3');location.reload()}}
+function init(){$('date').textContent=new Date().toLocaleDateString('zh-TW',{year:'numeric',month:'long',day:'numeric',weekday:'long'})+' · 退休到 95 歲模型';['asset','monthly','age','retireAge','spend','endAge','mean','vol'].forEach(k=>$(k).value=S[k]);home();renderEnglish();startChat();runMC();if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{})}
+init();
+</script></body></html>
