@@ -25,7 +25,7 @@ button,input,select,textarea{font:inherit}.app{min-height:100dvh;padding:calc(22
 </style></head>
 <body><main class="app">
 <section id="money" class="page active">
- <div class="top"><h1>記帳 <span class="ver">v2.5.1</span></h1><button class="iconbtn" onclick="openMoney()">＋</button></div>
+ <div class="top"><h1>記帳 <span class="ver">v2.5.2</span></h1><button class="iconbtn" onclick="openMoney()">＋</button></div>
  <div class="card balance"><div class="label">本月結餘</div><div class="big" id="balance">$0</div><div class="stats"><div class="stat label">支出<b id="expense">$0</b></div><div class="stat label">收入<b id="income">$0</b></div><div class="stat label">筆數<b id="count">0</b></div></div></div>
  <div class="card periods" id="periods"></div>
 </section>
@@ -39,7 +39,7 @@ button,input,select,textarea{font:inherit}.app{min-height:100dvh;padding:calc(22
  <div id="categoryStats" class="card catStats"></div>
 </section>
 <section id="settings" class="page">
-<div class="top"><h1>設定 <span class="ver">v2.5.1</span></h1></div>
+<div class="top"><h1>設定 <span class="ver">v2.5.2</span></h1></div>
 <div class="card"><b style="font-size:20px">iCloud 備份與還原</b>
 <div class="label" style="font-size:14px;margin-top:7px">備份記帳、加班與請假全部資料</div>
 <div id="lastBackup" style="margin-top:18px">上次備份：尚未備份</div>
@@ -48,7 +48,7 @@ button,input,select,textarea{font:inherit}.app{min-height:100dvh;padding:calc(22
 <div id="backupStatus" class="hint" style="margin-top:12px">備份時選「儲存到檔案」→ iCloud Drive。</div></div>
 </section>
 <section id="overtime" class="page">
- <div class="top"><h1>加班 <span class="ver">v2.5.1</span></h1><div class="monthNav"><button class="smallbtn" onclick="moveCal(-1)">‹</button><h2 id="calMonth"></h2><button class="smallbtn" onclick="moveCal(1)">›</button></div></div>
+ <div class="top"><h1>加班 <span class="ver">v2.5.2</span></h1><div class="monthNav"><button class="smallbtn" onclick="moveCal(-1)">‹</button><h2 id="calMonth"></h2><button class="smallbtn" onclick="moveCal(1)">›</button></div></div>
  <div class="calhead"><span>週一</span><span>週二</span><span>週三</span><span>週四</span><span>週五</span><span>週六</span><span>週日</span></div><div id="calendar" class="calendar"></div>
  <div class="summary" style="margin-top:18px"><div class="card"><span class="label">加班總時數</span><b id="otHours">0 h</b></div><div class="card"><span class="label">加班天數</span><b id="otDays">0 天</b></div><div class="card"><span class="label">請假</span><b id="leaveHours">0 h</b></div></div>
 </section>
@@ -138,7 +138,7 @@ function backupData(){
  document.getElementById('backupPassword').value='';
  document.getElementById('backupPassword2').value='';
  sheet.style.display='flex';
- setTimeout(()=>document.getElementById('backupPassword').focus(),100);
+ 
 }
 function closeBackupSheet(){
  document.getElementById('backupSheet').style.display='none';
@@ -151,7 +151,7 @@ async function createEncryptedBackup(){
  const btn=document.getElementById('createEncryptedBackupBtn');
  btn.disabled=true; btn.textContent='加密中…';
  try{
-  const payload={app:'記帳・加班',version:'2.5.1',exportedAt:new Date().toISOString(),money,ots};
+  const payload={app:'記帳・加班',version:'2.5.2',exportedAt:new Date().toISOString(),money,ots};
   const enc=await encryptBackupObject(payload,p);
   const json=JSON.stringify(enc,null,2);
   const filename='記帳加班_加密備份_'+ymd(new Date())+'.json';
@@ -221,7 +221,7 @@ async function encryptBackupObject(obj,password){
  const salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12));
  const key=await deriveBackupKey(password,salt);
  const cipher=await crypto.subtle.encrypt({name:'AES-GCM',iv},key,new TextEncoder().encode(JSON.stringify(obj)));
- return {app:'記帳・加班',format:'encrypted-backup',version:'2.5.1',crypto:{algorithm:'AES-GCM',kdf:'PBKDF2-SHA256',iterations:250000},salt:bytesToB64(salt),iv:bytesToB64(iv),data:bytesToB64(cipher)};
+ return {app:'記帳・加班',format:'encrypted-backup',version:'2.5.2',crypto:{algorithm:'AES-GCM',kdf:'PBKDF2-SHA256',iterations:250000},salt:bytesToB64(salt),iv:bytesToB64(iv),data:bytesToB64(cipher)};
 }
 async function decryptBackupObject(w,password){
  const key=await deriveBackupKey(password,b64ToBytes(w.salt));
@@ -230,8 +230,18 @@ async function decryptBackupObject(w,password){
 }
 
 </script>
-<div id="backupSheet" class="modal" style="display:none;z-index:9999">
-  <div class="modalCard" style="max-width:520px;margin:auto">
+<div id="backupSheet" class="modal" style="
+  display:none;
+  z-index:9999;
+  position:fixed;
+  inset:0;
+  align-items:flex-start;
+  justify-content:center;
+  overflow-y:auto;
+  box-sizing:border-box;
+  padding:calc(env(safe-area-inset-top) + 72px) 18px calc(env(safe-area-inset-bottom) + 24px);
+">
+  <div class="modalCard" style="width:100%;max-width:520px;margin:0 auto">
     <h2 style="margin-top:0">建立加密備份</h2>
     <p class="muted">密碼只在這台裝置上用來加密，不會上傳。忘記密碼將無法還原。</p>
     <input id="backupPassword" type="password" autocomplete="new-password" placeholder="備份密碼（至少 8 個字元）"
