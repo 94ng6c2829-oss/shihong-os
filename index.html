@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#000000"><link rel="manifest" href="./manifest.json">
 <link rel="apple-touch-icon" href="./icon-180.png">
-<title>記帳・加班 2.1</title>
+<title>記帳・加班 2.2</title>
 <style>
 :root{--bg:#000;--card:#17191b;--card2:#1d222b;--line:#30343a;--muted:#92969d;--blue:#4285f4;--green:#62b44b;--red:#ff6b6b}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:#f5f5f7;font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC",sans-serif}
@@ -25,23 +25,9 @@ button,input,select,textarea{font:inherit}.app{min-height:100dvh;padding:calc(22
 </style></head>
 <body><main class="app">
 <section id="money" class="page active">
- <div class="top"><h1>記帳 <span class="ver">v2.1</span></h1><button class="iconbtn" onclick="openMoney()">＋</button></div>
+ <div class="top"><h1>記帳 <span class="ver">v2.2</span></h1><button class="iconbtn" onclick="openMoney()">＋</button></div>
  <div class="card balance"><div class="label">本月結餘</div><div class="big" id="balance">$0</div><div class="stats"><div class="stat label">支出<b id="expense">$0</b></div><div class="stat label">收入<b id="income">$0</b></div><div class="stat label">筆數<b id="count">0</b></div></div></div>
  <div class="card periods" id="periods"></div>
- <div class="card">
-   <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
-     <div>
-       <b>iCloud 備份</b>
-       <div class="label" style="font-size:14px;margin-top:4px">備份記帳＋加班全部資料</div>
-     </div>
-     <div style="display:flex;gap:8px">
-       <button class="smallbtn" style="font-size:15px" onclick="backupData()">備份</button>
-       <button class="smallbtn" style="font-size:15px" onclick="$('restoreFile').click()">還原</button>
-     </div>
-   </div>
-   <input id="restoreFile" type="file" accept="application/json,.json" style="display:none" onchange="restoreData(event)">
-   <div id="backupStatus" class="hint" style="margin-top:10px">備份時選「儲存到檔案」→ iCloud Drive。</div>
- </div>
 </section>
 <section id="ledger" class="page">
  <div class="monthHead"><button class="smallbtn" onclick="showPage('money')">‹</button><div class="monthNav"><button class="smallbtn" onclick="moveLedger(-1)">‹</button><h2 id="ledgerMonth"></h2><button class="smallbtn" onclick="moveLedger(1)">›</button></div></div>
@@ -50,13 +36,22 @@ button,input,select,textarea{font:inherit}.app{min-height:100dvh;padding:calc(22
  <div class="filter"><button class="on" data-f="all" onclick="setFilter(this)">全部</button><button data-f="expense" onclick="setFilter(this)">花費</button><button data-f="income" onclick="setFilter(this)">收入</button></div>
  <div id="ledgerList"></div>
 </section>
+<section id="settings" class="page">
+<div class="top"><h1>設定 <span class="ver">v2.2</span></h1></div>
+<div class="card"><b style="font-size:20px">iCloud 備份與還原</b>
+<div class="label" style="font-size:14px;margin-top:7px">備份記帳、加班與請假全部資料</div>
+<div id="lastBackup" style="margin-top:18px">上次備份：尚未備份</div>
+<div class="actions"><button class="save" onclick="backupData()">立即備份</button><button class="smallbtn" style="font-size:16px" onclick="$('restoreFile').click()">從備份還原</button></div>
+<input id="restoreFile" type="file" accept="application/json,.json" style="display:none" onchange="restoreData(event)">
+<div id="backupStatus" class="hint" style="margin-top:12px">備份時選「儲存到檔案」→ iCloud Drive。</div></div>
+</section>
 <section id="overtime" class="page">
- <div class="top"><h1>加班 <span class="ver">v2.1</span></h1><div class="monthNav"><button class="smallbtn" onclick="moveCal(-1)">‹</button><h2 id="calMonth"></h2><button class="smallbtn" onclick="moveCal(1)">›</button></div></div>
+ <div class="top"><h1>加班 <span class="ver">v2.2</span></h1><div class="monthNav"><button class="smallbtn" onclick="moveCal(-1)">‹</button><h2 id="calMonth"></h2><button class="smallbtn" onclick="moveCal(1)">›</button></div></div>
  <div class="calhead"><span>週一</span><span>週二</span><span>週三</span><span>週四</span><span>週五</span><span>週六</span><span>週日</span></div><div id="calendar" class="calendar"></div>
  <div class="summary" style="margin-top:18px"><div class="card"><span class="label">加班總時數</span><b id="otHours">0 h</b></div><div class="card"><span class="label">加班天數</span><b id="otDays">0 天</b></div><div class="card"><span class="label">請假</span><b id="leaveHours">0 h</b></div></div>
 </section>
 </main>
-<nav class="tabs"><button class="tab active" onclick="showPage('money',this)">▣<br>記帳</button><button class="tab" onclick="showPage('overtime',this)">◷<br>加班</button></nav>
+<nav class="tabs"><button class="tab active" onclick="showPage('money',this)">▣<br>記帳</button><button class="tab" onclick="showPage('overtime',this)">◷<br>加班</button><button class="tab" onclick="showPage('settings',this)">⚙<br>設定</button></nav>
 
 <div id="moneySheet" class="overlay" onclick="closeOnBg(event,'moneySheet')"><div class="sheet">
 <h2 id="moneyTitle">新增記帳</h2><div class="seg"><button id="mExpense" class="on" onclick="mType='expense';syncMoneyType()">花費</button><button id="mIncome" onclick="mType='income';syncMoneyType()">收入</button></div>
@@ -110,15 +105,18 @@ function deleteOt(){delete ots[editOtDate];localStorage.setItem(otKey,JSON.strin
 function closeOnBg(e,id){if(e.target.id===id)$(id).classList.remove('show')} function renderAll(){renderMoney();renderLedger();renderCal()}
 $('hourChips').innerHTML=[0,.5,1,1.5,2,2.5,3,3.5,4,5,6,8,10,12].map(h=>`<button data-h="${h}" onclick="$('oHours').value='${h}';document.querySelectorAll('#hourChips button').forEach(x=>x.classList.remove('on'));this.classList.add('on')">${h}</button>`).join('');
 
+const backupTimeKey='shihong-last-backup-v2';
+function renderBackupStatus(){const el=$('lastBackup');if(!el)return;const v=localStorage.getItem(backupTimeKey);if(!v){el.textContent='上次備份：尚未備份';return}const d=new Date(v);el.textContent=`上次備份：${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`}
+function markBackupDone(){localStorage.setItem(backupTimeKey,new Date().toISOString());renderBackupStatus()}
 async function backupData(){
-  const payload={app:"記帳・加班",version:"2.1",exportedAt:new Date().toISOString(),money,overtime:ots};
+  const payload={app:"記帳・加班",version:"2.2",exportedAt:new Date().toISOString(),money,overtime:ots};
   const text=JSON.stringify(payload,null,2);
   const filename=`記帳加班備份_${new Date().toISOString().slice(0,10)}.json`;
   const blob=new Blob([text],{type:"application/json"});
   const file=new File([blob],filename,{type:"application/json"});
   try{
     if(navigator.canShare && navigator.canShare({files:[file]})){
-      await navigator.share({files:[file],title:"記帳・加班備份"});
+      await navigator.share({files:[file],title:"記帳・加班備份"});markBackupDone();
       $('backupStatus').textContent='已開啟 iOS 分享選單；請選「儲存到檔案」並存到 iCloud Drive。';
     }else{
       const a=document.createElement('a');
@@ -153,6 +151,6 @@ async function restoreData(ev){
   ev.target.value='';
 }
 
-renderAll();
+renderAll();renderBackupStatus();
 if('serviceWorker'in navigator){navigator.serviceWorker.register('./sw.js').then(r=>r.update()).catch(()=>{})}
 </script></body></html>
