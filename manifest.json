@@ -1,11 +1,11 @@
 {
-  "name": "世弘 OS 3.0",
-  "short_name": "世弘 OS",
+  "name": "記帳・加班 1.1",
+  "short_name": "記帳加班",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#07101d",
-  "theme_color": "#07101d",
+  "background_color": "#050607",
+  "theme_color": "#050607",
   "icons": [
     {
       "src": "./icon-180.png",
