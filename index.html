@@ -25,7 +25,7 @@ button,input,select,textarea{font:inherit}.app{min-height:100dvh;padding:calc(22
 </style></head>
 <body><main class="app">
 <section id="money" class="page active">
- <div class="top"><h1>記帳 <span class="ver">v2.4</span></h1><button class="iconbtn" onclick="openMoney()">＋</button></div>
+ <div class="top"><h1>記帳 <span class="ver">v2.5</span></h1><button class="iconbtn" onclick="openMoney()">＋</button></div>
  <div class="card balance"><div class="label">本月結餘</div><div class="big" id="balance">$0</div><div class="stats"><div class="stat label">支出<b id="expense">$0</b></div><div class="stat label">收入<b id="income">$0</b></div><div class="stat label">筆數<b id="count">0</b></div></div></div>
  <div class="card periods" id="periods"></div>
 </section>
@@ -39,7 +39,7 @@ button,input,select,textarea{font:inherit}.app{min-height:100dvh;padding:calc(22
  <div id="categoryStats" class="card catStats"></div>
 </section>
 <section id="settings" class="page">
-<div class="top"><h1>設定 <span class="ver">v2.4</span></h1></div>
+<div class="top"><h1>設定 <span class="ver">v2.5</span></h1></div>
 <div class="card"><b style="font-size:20px">iCloud 備份與還原</b>
 <div class="label" style="font-size:14px;margin-top:7px">備份記帳、加班與請假全部資料</div>
 <div id="lastBackup" style="margin-top:18px">上次備份：尚未備份</div>
@@ -48,7 +48,7 @@ button,input,select,textarea{font:inherit}.app{min-height:100dvh;padding:calc(22
 <div id="backupStatus" class="hint" style="margin-top:12px">備份時選「儲存到檔案」→ iCloud Drive。</div></div>
 </section>
 <section id="overtime" class="page">
- <div class="top"><h1>加班 <span class="ver">v2.4</span></h1><div class="monthNav"><button class="smallbtn" onclick="moveCal(-1)">‹</button><h2 id="calMonth"></h2><button class="smallbtn" onclick="moveCal(1)">›</button></div></div>
+ <div class="top"><h1>加班 <span class="ver">v2.5</span></h1><div class="monthNav"><button class="smallbtn" onclick="moveCal(-1)">‹</button><h2 id="calMonth"></h2><button class="smallbtn" onclick="moveCal(1)">›</button></div></div>
  <div class="calhead"><span>週一</span><span>週二</span><span>週三</span><span>週四</span><span>週五</span><span>週六</span><span>週日</span></div><div id="calendar" class="calendar"></div>
  <div class="summary" style="margin-top:18px"><div class="card"><span class="label">加班總時數</span><b id="otHours">0 h</b></div><div class="card"><span class="label">加班天數</span><b id="otDays">0 天</b></div><div class="card"><span class="label">請假</span><b id="leaveHours">0 h</b></div></div>
 </section>
@@ -133,48 +133,65 @@ const backupTimeKey='shihong-last-backup-v2';
 function renderBackupStatus(){const el=$('lastBackup');if(!el)return;const v=localStorage.getItem(backupTimeKey);if(!v){el.textContent='上次備份：尚未備份';return}const d=new Date(v);el.textContent=`上次備份：${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`}
 function markBackupDone(){localStorage.setItem(backupTimeKey,new Date().toISOString());renderBackupStatus()}
 async function backupData(){
-  const payload={app:"記帳・加班",version:"2.4",exportedAt:new Date().toISOString(),money,overtime:ots};
-  const text=JSON.stringify(payload,null,2);
-  const filename=`記帳加班備份_${new Date().toISOString().slice(0,10)}.json`;
-  const blob=new Blob([text],{type:"application/json"});
-  const file=new File([blob],filename,{type:"application/json"});
-  try{
-    if(navigator.canShare && navigator.canShare({files:[file]})){
-      await navigator.share({files:[file],title:"記帳・加班備份"});markBackupDone();
-      $('backupStatus').textContent='已開啟 iOS 分享選單；請選「儲存到檔案」並存到 iCloud Drive。';
-    }else{
-      const a=document.createElement('a');
-      a.href=URL.createObjectURL(blob);
-      a.download=filename;
-      a.click();
-      setTimeout(()=>URL.revokeObjectURL(a.href),1500);
-      $('backupStatus').textContent='已產生備份檔；請在「檔案」App 移到 iCloud Drive。';
-    }
-  }catch(e){
-    if(e && e.name!=='AbortError') $('backupStatus').textContent='備份未完成，請再試一次。';
+ try{
+  if(!crypto?.subtle){alert('此瀏覽器不支援安全加密備份。');return}
+  const p=prompt('請設定備份密碼（至少 8 個字元）\n\n密碼只在本機使用，不會上傳，也無法替你找回。');
+  if(p===null)return;
+  if(p.length<8){alert('密碼至少需要 8 個字元。');return}
+  const p2=prompt('請再輸入一次備份密碼');
+  if(p2===null)return;
+  if(p!==p2){alert('兩次密碼不同，已取消。');return}
+  const payload={app:'記帳・加班',version:'2.5',exportedAt:new Date().toISOString(),money,ots};
+  const enc=await encryptBackupObject(payload,p);
+  const blob=new Blob([JSON.stringify(enc,null,2)],{type:'application/json'});
+  const filename='記帳加班_加密備份_'+ymd(new Date())+'.json';
+  const file=new File([blob],filename,{type:'application/json'});
+  if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
+   await navigator.share({files:[file],title:'記帳・加班 加密備份'});
+  }else{
+   const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download=filename;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);
   }
+  if(typeof markBackupDone==='function')markBackupDone();
+ }catch(e){if(e?.name!=='AbortError'){console.error(e);alert('備份失敗：'+(e?.message||e))}}
 }
-async function restoreData(ev){
-  const file=ev.target.files && ev.target.files[0];
-  if(!file) return;
-  try{
-    const text=await file.text();
-    const data=JSON.parse(text);
-    if(!Array.isArray(data.money) || !data.overtime || typeof data.overtime!=='object') throw new Error('invalid');
-    const ok=confirm(`要還原此備份嗎？\n記帳 ${data.money.length} 筆，加班/請假 ${Object.keys(data.overtime).length} 天。\n目前資料會被覆蓋。`);
-    if(!ok){ ev.target.value=''; return; }
-    money=data.money;
-    ots=data.overtime;
-    localStorage.setItem(moneyKey,JSON.stringify(money));
-    localStorage.setItem(otKey,JSON.stringify(ots));
-    $('backupStatus').textContent='還原完成。';
-    renderAll();
-  }catch(e){
-    alert('這不是有效的「記帳・加班」備份檔。');
+async function restoreData(event){
+ try{
+  const input=event?.target||document.querySelector('input[type=file]'),file=input?.files?.[0];
+  if(!file)return;
+  const raw=JSON.parse(await file.text());let data=raw;
+  if(raw?.format==='encrypted-backup'){
+   const p=prompt('請輸入這份加密備份的密碼');
+   if(p===null){input.value='';return}
+   try{data=await decryptBackupObject(raw,p)}
+   catch(e){input.value='';alert('密碼錯誤，或備份檔已損壞。資料未變更。');return}
   }
-  ev.target.value='';
+  if(!data||!Array.isArray(data.money)||typeof data.ots!=='object'||data.ots===null)throw new Error('不是有效的備份檔');
+  if(!confirm('確定還原？目前裝置上的記帳與加班資料會被備份內容取代。')){input.value='';return}
+  money=data.money;ots=data.ots;save();input.value='';
+  if(typeof render==='function')render();
+  alert(raw?.format==='encrypted-backup'?'加密備份還原完成。':'舊版備份還原完成。');
+ }catch(e){console.error(e);if(event?.target)event.target.value='';alert('還原失敗：'+(e?.message||e))}
 }
 
 renderAll();renderBackupStatus();
 if('serviceWorker'in navigator){navigator.serviceWorker.register('./sw.js').then(r=>r.update()).catch(()=>{})}
+
+function bytesToB64(bytes){let s='';const a=new Uint8Array(bytes);for(const b of a)s+=String.fromCharCode(b);return btoa(s)}
+function b64ToBytes(s){const b=atob(s),a=new Uint8Array(b.length);for(let i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return a}
+async function deriveBackupKey(password,salt){
+ const m=await crypto.subtle.importKey('raw',new TextEncoder().encode(password),'PBKDF2',false,['deriveKey']);
+ return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:250000,hash:'SHA-256'},m,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);
+}
+async function encryptBackupObject(obj,password){
+ const salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12));
+ const key=await deriveBackupKey(password,salt);
+ const cipher=await crypto.subtle.encrypt({name:'AES-GCM',iv},key,new TextEncoder().encode(JSON.stringify(obj)));
+ return {app:'記帳・加班',format:'encrypted-backup',version:'2.5',crypto:{algorithm:'AES-GCM',kdf:'PBKDF2-SHA256',iterations:250000},salt:bytesToB64(salt),iv:bytesToB64(iv),data:bytesToB64(cipher)};
+}
+async function decryptBackupObject(w,password){
+ const key=await deriveBackupKey(password,b64ToBytes(w.salt));
+ const plain=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64ToBytes(w.iv)},key,b64ToBytes(w.data));
+ return JSON.parse(new TextDecoder().decode(plain));
+}
+
 </script></body></html>
