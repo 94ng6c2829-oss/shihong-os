@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#000000"><link rel="manifest" href="./manifest.json">
 <link rel="apple-touch-icon" href="./icon-180.png">
-<title>記帳・加班 2.3</title>
+<title>記帳・加班 2.4</title>
 <style>
 :root{--bg:#000;--card:#17191b;--card2:#1d222b;--line:#30343a;--muted:#92969d;--blue:#4285f4;--green:#62b44b;--red:#ff6b6b}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:#f5f5f7;font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC",sans-serif}
@@ -12,7 +12,7 @@ button,input,select,textarea{font:inherit}.app{min-height:100dvh;padding:calc(22
 .page{display:none}.page.active{display:block}.top{display:flex;align-items:center;justify-content:space-between;margin:10px 0 20px}.top h1{font-size:34px;margin:0}.ver{font-size:13px;color:#777;font-weight:500}
 .iconbtn{border:0;background:#17191b;color:#fff;border-radius:18px;width:58px;height:58px;font-size:34px}.card{background:var(--card);border:1px solid #2d3136;border-radius:24px;padding:20px;margin:14px 0}
 .balance{background:var(--card2)}.label{color:var(--muted);font-size:17px}.big{font-size:46px;font-weight:700;margin:8px 0 18px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.stat b{display:block;font-size:20px;margin-top:4px}
-.periods .row{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;padding:17px 0;border-bottom:1px solid var(--line)}.periods .row:last-child{border:0}.neg{color:var(--blue)}.pos{color:var(--green)}
+.periods .row{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;padding:17px 0;border-bottom:1px solid var(--line)}.periods .row:last-child{border:0}.periods .row.clickable{cursor:pointer;-webkit-tap-highlight-color:transparent}.periods .row.clickable:active{opacity:.65}.neg{color:var(--blue)}.pos{color:var(--green)}
 .tabs{position:fixed;left:0;right:0;bottom:0;height:82px;padding-bottom:env(safe-area-inset-bottom);background:#101214;border-top:1px solid #292c31;display:flex;z-index:20}.tab{flex:1;background:none;border:0;color:#777;font-size:18px}.tab.active{color:var(--blue)}
 .monthHead{display:flex;align-items:center;justify-content:space-between}.monthNav{display:flex;align-items:center;gap:8px}.smallbtn{background:#17191b;border:0;color:#fff;border-radius:14px;padding:13px 16px;font-size:20px}
 .filter{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}.filter button{border:0;border-radius:12px;padding:11px;background:#1b1d20;color:#aaa}.filter button.on{background:#28364e;color:#fff}
@@ -25,7 +25,7 @@ button,input,select,textarea{font:inherit}.app{min-height:100dvh;padding:calc(22
 </style></head>
 <body><main class="app">
 <section id="money" class="page active">
- <div class="top"><h1>記帳 <span class="ver">v2.3</span></h1><button class="iconbtn" onclick="openMoney()">＋</button></div>
+ <div class="top"><h1>記帳 <span class="ver">v2.4</span></h1><button class="iconbtn" onclick="openMoney()">＋</button></div>
  <div class="card balance"><div class="label">本月結餘</div><div class="big" id="balance">$0</div><div class="stats"><div class="stat label">支出<b id="expense">$0</b></div><div class="stat label">收入<b id="income">$0</b></div><div class="stat label">筆數<b id="count">0</b></div></div></div>
  <div class="card periods" id="periods"></div>
 </section>
@@ -39,7 +39,7 @@ button,input,select,textarea{font:inherit}.app{min-height:100dvh;padding:calc(22
  <div id="categoryStats" class="card catStats"></div>
 </section>
 <section id="settings" class="page">
-<div class="top"><h1>設定 <span class="ver">v2.3</span></h1></div>
+<div class="top"><h1>設定 <span class="ver">v2.4</span></h1></div>
 <div class="card"><b style="font-size:20px">iCloud 備份與還原</b>
 <div class="label" style="font-size:14px;margin-top:7px">備份記帳、加班與請假全部資料</div>
 <div id="lastBackup" style="margin-top:18px">上次備份：尚未備份</div>
@@ -48,7 +48,7 @@ button,input,select,textarea{font:inherit}.app{min-height:100dvh;padding:calc(22
 <div id="backupStatus" class="hint" style="margin-top:12px">備份時選「儲存到檔案」→ iCloud Drive。</div></div>
 </section>
 <section id="overtime" class="page">
- <div class="top"><h1>加班 <span class="ver">v2.3</span></h1><div class="monthNav"><button class="smallbtn" onclick="moveCal(-1)">‹</button><h2 id="calMonth"></h2><button class="smallbtn" onclick="moveCal(1)">›</button></div></div>
+ <div class="top"><h1>加班 <span class="ver">v2.4</span></h1><div class="monthNav"><button class="smallbtn" onclick="moveCal(-1)">‹</button><h2 id="calMonth"></h2><button class="smallbtn" onclick="moveCal(1)">›</button></div></div>
  <div class="calhead"><span>週一</span><span>週二</span><span>週三</span><span>週四</span><span>週五</span><span>週六</span><span>週日</span></div><div id="calendar" class="calendar"></div>
  <div class="summary" style="margin-top:18px"><div class="card"><span class="label">加班總時數</span><b id="otHours">0 h</b></div><div class="card"><span class="label">加班天數</span><b id="otDays">0 天</b></div><div class="card"><span class="label">請假</span><b id="leaveHours">0 h</b></div></div>
 </section>
@@ -82,16 +82,20 @@ function renderMoney(){
  let r=monthRows(now.getFullYear(),now.getMonth()),[e,i]=sums(r);$('balance').textContent=fmt(i-e);$('expense').textContent=fmt(e);$('income').textContent=fmt(i);$('count').textContent=r.length;
  let today=ymd(now),yd=new Date(now);yd.setDate(now.getDate()-1);let yesterday=ymd(yd);let start=new Date(now);let dow=(now.getDay()+6)%7;start.setDate(now.getDate()-dow);
  let defs=[['今天',x=>x.date===today],['昨天',x=>x.date===yesterday],['本週',x=>new Date(x.date+'T00:00:00')>=new Date(start.getFullYear(),start.getMonth(),start.getDate())&&new Date(x.date+'T00:00:00')<=now],['本月',x=>r.includes(x)]];
- $('periods').innerHTML=defs.map(([n,f],idx)=>{let rr=money.filter(f),[ee,ii]=sums(rr);return `<div class="row" ${idx===3?'onclick="openLedger()"':''}><b>${n}</b><span class="neg">-${fmt(ee).slice(1)}</span><span class="pos">+${fmt(ii).slice(1)}</span></div>`}).join('');
+ $('periods').innerHTML=defs.map(([n,f],idx)=>{let rr=money.filter(f),[ee,ii]=sums(rr);let action=idx===0?`onclick="openDay('${today}')"`:idx===1?`onclick="openDay('${yesterday}')"`:idx===2?'onclick="openWeek()"':'onclick="openLedger()"';return `<div class="row clickable" ${action}><b>${n}</b><span class="neg">-${fmt(ee).slice(1)}</span><span class="pos">+${fmt(ii).slice(1)}</span></div>`}).join('');
  let memos=[...new Set(money.map(x=>x.memo).filter(Boolean))];$('memoHistory').innerHTML=memos.map(x=>`<option value="${x.replaceAll('"','&quot;')}">`).join('')
 }
-function openLedger(){ledgerDate=new Date(now.getFullYear(),now.getMonth(),1);showPage('ledger');renderLedger()} function moveLedger(n){ledgerDate.setMonth(ledgerDate.getMonth()+n);renderLedger()}
+let ledgerMode='month',ledgerDay=null,ledgerWeekStart=null,ledgerWeekEnd=null;
+function openLedger(){ledgerMode='month';ledgerDay=null;ledgerWeekStart=null;ledgerWeekEnd=null;ledgerDate=new Date(now.getFullYear(),now.getMonth(),1);$('search').value='';filter='all';document.querySelectorAll('.filter button').forEach((x,i)=>x.classList.toggle('on',i===0));showPage('ledger');renderLedger()}
+function openDay(date){ledgerMode='day';ledgerDay=date;ledgerDate=new Date(date+'T00:00:00');$('search').value='';filter='all';document.querySelectorAll('.filter button').forEach((x,i)=>x.classList.toggle('on',i===0));showPage('ledger');renderLedger()}
+function openWeek(){let start=new Date(now);let dow=(now.getDay()+6)%7;start.setDate(now.getDate()-dow);start=new Date(start.getFullYear(),start.getMonth(),start.getDate());let end=new Date(start);end.setDate(start.getDate()+6);ledgerMode='week';ledgerWeekStart=ymd(start);ledgerWeekEnd=ymd(end);$('search').value='';filter='all';document.querySelectorAll('.filter button').forEach((x,i)=>x.classList.toggle('on',i===0));showPage('ledger');renderLedger()}
+function moveLedger(n){ledgerMode='month';ledgerDay=null;ledgerWeekStart=null;ledgerWeekEnd=null;ledgerDate.setMonth(ledgerDate.getMonth()+n);renderLedger()}
 function setFilter(b){document.querySelectorAll('.filter button').forEach(x=>x.classList.remove('on'));b.classList.add('on');filter=b.dataset.f;renderLedger()}
 function renderLedger(){
- let q=$('search').value.trim().toLowerCase(), global=q.length>0, rows=global?money.slice():monthRows(ledgerDate.getFullYear(),ledgerDate.getMonth());if(filter!=='all')rows=rows.filter(x=>x.type===filter);
+ let q=$('search').value.trim().toLowerCase(), global=q.length>0, rows;if(global)rows=money.slice();else if(ledgerMode==='day')rows=money.filter(x=>x.date===ledgerDay);else if(ledgerMode==='week')rows=money.filter(x=>x.date>=ledgerWeekStart&&x.date<=ledgerWeekEnd);else rows=monthRows(ledgerDate.getFullYear(),ledgerDate.getMonth());if(filter!=='all')rows=rows.filter(x=>x.type===filter);
  if(q)rows=rows.filter(x=>`${x.category} ${x.memo||''} ${x.amount} ${x.date}`.toLowerCase().includes(q));rows.sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);
- $('ledgerMonth').textContent=global?'搜尋結果':`${ledgerDate.getFullYear()}年${ledgerDate.getMonth()+1}月`;
- let sr=global?rows:monthRows(ledgerDate.getFullYear(),ledgerDate.getMonth()),[e,i]=sums(sr);$('lExp').textContent='-'+fmt(e);$('lInc').textContent='+'+fmt(i);$('lBal').textContent=fmt(i-e);
+ $('ledgerMonth').textContent=global?'搜尋結果':ledgerMode==='day'?`${ledgerDay.replaceAll('-',' / ')}`:ledgerMode==='week'?`本週 ${ledgerWeekStart.slice(5).replace('-','/')}–${ledgerWeekEnd.slice(5).replace('-','/')}`:`${ledgerDate.getFullYear()}年${ledgerDate.getMonth()+1}月`;
+ let sr=rows,[e,i]=sums(sr);$('lExp').textContent='-'+fmt(e);$('lInc').textContent='+'+fmt(i);$('lBal').textContent=fmt(i-e);
 
  let ss=$('searchStats');
  if(global){
@@ -100,7 +104,7 @@ function renderLedger(){
    ss.innerHTML=`<div class="label">「${escapeHtml($('search').value.trim())}」搜尋統計</div><div class="nums"><div class="label">筆數<b>${rows.length}</b></div><div class="label">累計金額<b>${fmt(total)}</b></div><div class="label">平均每筆<b>${fmt(avg)}</b></div></div>`;
  }else{ss.classList.remove('show');ss.innerHTML=''}
 
- let groups={};rows.forEach(x=>(groups[x.date]??=[]).push(x));$('ledgerList').innerHTML=Object.keys(groups).map(d=>`<div class="daygroup"><div class="daytitle">${d.replaceAll('-',' / ')}</div>${groups[d].map(x=>`<div class="tx"><button onclick="editMoneyItem(${x.id})"><b>${escapeHtml(x.category)}</b><div class="memo">${escapeHtml(x.memo||'')}</div></button><div class="amount ${x.type==='expense'?'neg':'pos'}">${x.type==='expense'?'-':'+'}${fmt(x.amount)}</div></div>`).join('')}</div>`).join('')||'<div class="card label">沒有符合的紀錄。</div>';
+ let groups={};rows.forEach(x=>(groups[x.date]??=[]).push(x));$('ledgerList').innerHTML=(ledgerMode==='day'&&!global?`<button class="smallbtn" style="width:100%;margin:4px 0 10px" onclick="openMoneyForDate('${ledgerDay}')">＋ 新增 ${ledgerDay.replaceAll('-',' / ')} 記帳</button>`:'')+(ledgerMode==='week'&&!global?`<button class="smallbtn" style="width:100%;margin:4px 0 10px" onclick="openMoney()">＋ 新增記帳</button>`:'')+(Object.keys(groups).map(d=>`<div class="daygroup"><div class="daytitle">${d.replaceAll('-',' / ')}</div>${groups[d].map(x=>`<div class="tx"><button onclick="editMoneyItem(${x.id})"><b>${escapeHtml(x.category)}</b><div class="memo">${escapeHtml(x.memo||'')}</div></button><div class="amount ${x.type==='expense'?'neg':'pos'}">${x.type==='expense'?'-':'+'}${fmt(x.amount)}</div></div>`).join('')}</div>`).join('')||'<div class="card label">沒有符合的紀錄。</div>');
 
  let base=global?rows:monthRows(ledgerDate.getFullYear(),ledgerDate.getMonth()).filter(x=>x.type==='expense');
  if(global)base=base.filter(x=>x.type==='expense');
@@ -110,6 +114,7 @@ function renderLedger(){
  $('categoryStats').innerHTML=ranked.length?`<b style="font-size:20px">${global?'搜尋結果':'本月'}分類支出排行</b>${ranked.map(([c,v],idx)=>`<div class="catrow"><span>${idx+1}. ${escapeHtml(c)}</span><span class="neg">${fmt(v)}</span><span class="label">${e?Math.round(v/e*100):0}%</span></div>`).join('')}`:'';
 }
 function openMoney(id=null){editMoney=id;let x=id?money.find(a=>a.id===id):null;mType=x?.type||'expense';syncMoneyType();$('moneyTitle').textContent=x?'修改紀錄':'新增記帳';$('mAmount').value=x?.amount||'';$('mCat').value=x?.category||'其他';$('mDate').value=x?.date||ymd(now);$('mMemo').value=x?.memo||'';$('mDelete').style.visibility=x?'visible':'hidden';$('moneySheet').classList.add('show')}
+function openMoneyForDate(date){openMoney();$('mDate').value=date}
 function editMoneyItem(id){openMoney(id)} function syncMoneyType(){$('mExpense').classList.toggle('on',mType==='expense');$('mIncome').classList.toggle('on',mType==='income')}
 function saveMoney(){let a=parseFloat($('mAmount').value);if(!(a>0))return alert('請輸入金額');let obj={id:editMoney||Date.now(),type:mType,amount:a,category:$('mCat').value,date:$('mDate').value,memo:$('mMemo').value.trim()};if(editMoney)money=money.map(x=>x.id===editMoney?obj:x);else money.push(obj);localStorage.setItem(moneyKey,JSON.stringify(money));$('moneySheet').classList.remove('show');renderAll()}
 function deleteMoney(){if(!editMoney)return;money=money.filter(x=>x.id!==editMoney);localStorage.setItem(moneyKey,JSON.stringify(money));$('moneySheet').classList.remove('show');renderAll()}
@@ -128,7 +133,7 @@ const backupTimeKey='shihong-last-backup-v2';
 function renderBackupStatus(){const el=$('lastBackup');if(!el)return;const v=localStorage.getItem(backupTimeKey);if(!v){el.textContent='上次備份：尚未備份';return}const d=new Date(v);el.textContent=`上次備份：${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`}
 function markBackupDone(){localStorage.setItem(backupTimeKey,new Date().toISOString());renderBackupStatus()}
 async function backupData(){
-  const payload={app:"記帳・加班",version:"2.3",exportedAt:new Date().toISOString(),money,overtime:ots};
+  const payload={app:"記帳・加班",version:"2.4",exportedAt:new Date().toISOString(),money,overtime:ots};
   const text=JSON.stringify(payload,null,2);
   const filename=`記帳加班備份_${new Date().toISOString().slice(0,10)}.json`;
   const blob=new Blob([text],{type:"application/json"});
