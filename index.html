@@ -1,106 +1,158 @@
-<!doctype html><html lang="zh-Hant"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#050607"><meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="記帳加班">
-<link rel="manifest" href="./manifest.json"><link rel="apple-touch-icon" href="./icon-180.png">
-<title>記帳・加班 1.1</title>
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#000000"><link rel="manifest" href="./manifest.json">
+<link rel="apple-touch-icon" href="./icon-180.png">
+<title>記帳・加班 2.1</title>
 <style>
-:root{--bg:#050607;--card:#17191c;--card2:#202225;--text:#f5f5f7;--muted:#8e9299;--line:#2a2d31;--blue:#3b82f6;--green:#34c759;--red:#ff5b5b;--orange:#ff8a32}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC",sans-serif}
-button,input,select{font:inherit}.app{max-width:760px;margin:auto;padding:calc(16px + env(safe-area-inset-top)) 16px calc(100px + env(safe-area-inset-bottom))}
-h1{font-size:30px;margin:8px 0 18px}.top{display:flex;align-items:center;justify-content:space-between}.monthNav{display:flex;align-items:center;gap:14px}.iconBtn{border:0;background:#15171a;color:#fff;width:42px;height:42px;border-radius:14px;font-size:23px}
-.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:14px 0}.stat{background:var(--card);border:1px solid var(--line);padding:13px;border-radius:16px}.stat small{color:var(--muted)}.stat b{display:block;font-size:21px;margin-top:5px}
-.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.dow{text-align:center;color:#aaa;padding:8px 0;font-size:13px}.day{min-height:78px;border:0;border-radius:14px;background:transparent;color:#fff;padding:7px;text-align:left;position:relative}.day.other{opacity:.22}.day.today{background:#1b1d20}.day.selected{outline:2px solid var(--blue);background:#151c27}.num{font-size:20px}.hours{display:block;color:var(--blue);font-size:14px;margin-top:8px}.leave{color:var(--orange)}.dot{width:5px;height:5px;background:#aaa;border-radius:50%;position:absolute;top:5px;left:50%}
-.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:15px;margin-top:15px}.row{display:flex;align-items:center;gap:9px}.between{justify-content:space-between}.muted{color:var(--muted)}.btn{border:0;border-radius:13px;background:#292c30;color:#fff;padding:11px 14px}.primary{background:var(--blue)}.danger{background:#4a2427;color:#ff9da4}
-.list{display:grid;gap:8px}.item{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding:12px 2px}.item:last-child{border:0}
-.fab{position:fixed;right:22px;bottom:calc(90px + env(safe-area-inset-bottom));width:58px;height:58px;border:0;border-radius:50%;background:var(--blue);color:#fff;font-size:34px;box-shadow:0 8px 30px #0008}
-.tabs{position:fixed;bottom:0;left:0;right:0;background:#111316eF;backdrop-filter:blur(16px);display:flex;justify-content:space-around;padding:10px 0 calc(10px + env(safe-area-inset-bottom));border-top:1px solid var(--line)}
-.tab{border:0;background:transparent;color:#777;padding:8px 35px}.tab.active{color:var(--blue)}.section{display:none}.section.active{display:block}
-.sheetWrap{position:fixed;inset:0;background:#000a;z-index:20;display:none;align-items:flex-end}.sheetWrap.show{display:flex}.sheet{width:100%;max-width:760px;margin:auto;background:#202020;border-radius:20px 20px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom));max-height:82vh;overflow:auto}
-.sheet h2{margin:0}.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:16px 0}.seg button,.hoursGrid button{border:0;background:#333;color:#ddd;border-radius:10px;padding:12px}.seg button.active,.hoursGrid button.active{background:var(--blue);color:#fff}
-.hoursGrid{display:grid;grid-template-columns:repeat(6,1fr);gap:7px}.field{margin:14px 0}.field label{display:block;color:var(--muted);font-size:13px;margin-bottom:6px}.field input,.field select{width:100%;background:#111;border:1px solid var(--line);border-radius:12px;padding:12px;color:#fff}
-.bigInput{font-size:30px}.expenseHead{background:linear-gradient(135deg,#17253a,#1b1d21);border-radius:22px;padding:18px;margin-bottom:15px}.expenseHead .amount{font-size:38px;font-weight:800}
-.kind{display:grid;grid-template-columns:1fr 1fr;gap:8px}.kind button{border:0;border-radius:12px;padding:13px;background:#2a2d31;color:#fff}.kind button.active{background:var(--blue)}
-@media(max-width:430px){.day{min-height:68px;padding:5px}.num{font-size:18px}.hoursGrid{grid-template-columns:repeat(4,1fr)}.tab{padding:8px 28px}}
-</style></head><body><div class="app">
-
-<section id="money" class="section active">
-<div class="top"><h1>記帳 <span style="font-size:12px;color:#777;font-weight:500">v1.1</span></h1><button class="iconBtn" onclick="openMoney()">＋</button></div>
-<div class="expenseHead"><div class="muted">本月結餘</div><div class="amount" id="balance">$0</div><div class="summary"><div><small class="muted">支出</small><b id="expense">$0</b></div><div><small class="muted">收入</small><b id="income">$0</b></div><div><small class="muted">筆數</small><b id="txCount">0</b></div></div></div>
-<div class="card"><div class="row between"><b>本月紀錄</b><span class="muted" id="moneyMonth"></span></div><div class="list" id="txList"></div></div>
-<button class="fab" onclick="openMoney()">＋</button>
+:root{--bg:#000;--card:#17191b;--card2:#1d222b;--line:#30343a;--muted:#92969d;--blue:#4285f4;--green:#62b44b;--red:#ff6b6b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#f5f5f7;font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC",sans-serif}
+button,input,select,textarea{font:inherit}.app{min-height:100dvh;padding:calc(22px + env(safe-area-inset-top)) 16px calc(104px + env(safe-area-inset-bottom))}
+.page{display:none}.page.active{display:block}.top{display:flex;align-items:center;justify-content:space-between;margin:10px 0 20px}.top h1{font-size:34px;margin:0}.ver{font-size:13px;color:#777;font-weight:500}
+.iconbtn{border:0;background:#17191b;color:#fff;border-radius:18px;width:58px;height:58px;font-size:34px}.card{background:var(--card);border:1px solid #2d3136;border-radius:24px;padding:20px;margin:14px 0}
+.balance{background:var(--card2)}.label{color:var(--muted);font-size:17px}.big{font-size:46px;font-weight:700;margin:8px 0 18px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.stat b{display:block;font-size:20px;margin-top:4px}
+.periods .row{display:grid;grid-template-columns:1fr auto auto;gap:12px;align-items:center;padding:17px 0;border-bottom:1px solid var(--line)}.periods .row:last-child{border:0}.neg{color:var(--blue)}.pos{color:var(--green)}
+.tabs{position:fixed;left:0;right:0;bottom:0;height:82px;padding-bottom:env(safe-area-inset-bottom);background:#101214;border-top:1px solid #292c31;display:flex;z-index:20}.tab{flex:1;background:none;border:0;color:#777;font-size:18px}.tab.active{color:var(--blue)}
+.monthHead{display:flex;align-items:center;justify-content:space-between}.monthNav{display:flex;align-items:center;gap:8px}.smallbtn{background:#17191b;border:0;color:#fff;border-radius:14px;padding:13px 16px;font-size:20px}
+.filter{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}.filter button{border:0;border-radius:12px;padding:11px;background:#1b1d20;color:#aaa}.filter button.on{background:#28364e;color:#fff}
+.search{width:100%;border:1px solid #333;background:#17191b;color:#fff;border-radius:15px;padding:14px 16px;margin:4px 0 14px}
+.daygroup{margin:18px 0}.daytitle{color:#9a9da3;font-weight:700;margin:8px 4px}.tx{display:grid;grid-template-columns:1fr auto;gap:10px;padding:13px 4px;border-bottom:1px solid #292c31}.tx .memo{color:#aaa;font-size:14px;margin-top:3px}.tx button{background:none;border:0;color:inherit;text-align:left;padding:0}.amount{align-self:center;font-size:20px}
+.calhead{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;color:#aaa;margin-bottom:8px}.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:7px}.day{min-height:82px;border:0;border-radius:15px;background:transparent;color:#eee;padding:8px 4px;text-align:left}.day.today{background:#202326}.day .num{font-size:20px}.dot{color:#aaa;font-size:12px}.ot{color:var(--blue);font-size:13px;margin-top:7px}.leave{color:#f2a340;font-size:13px;margin-top:7px}
+.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.summary .card{margin:0;padding:15px;border-radius:18px}.summary b{font-size:22px;display:block;margin-top:7px}
+.overlay{position:fixed;inset:0;background:#0009;display:none;z-index:50}.overlay.show{display:block}.sheet{position:absolute;left:0;right:0;bottom:0;background:#1b1b1d;border-radius:24px 24px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom));max-height:88dvh;overflow:auto}
+.sheet h2{margin:0 0 16px}.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}.seg button,.chips button{border:0;background:#303033;color:#ddd;border-radius:12px;padding:13px}.seg button.on,.chips button.on{background:var(--blue);color:#fff}.field{margin:13px 0}.field label{display:block;color:#999;margin-bottom:7px}.field input,.field select,.field textarea{width:100%;background:#29292c;border:1px solid #3a3a3d;color:#fff;border-radius:12px;padding:13px}.chips{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:16px}.actions button{border:0;border-radius:13px;padding:14px}.save{background:var(--blue);color:#fff}.delete{background:#3a2424;color:#ff8c8c}.hint{font-size:13px;color:#777;margin-top:6px}
+</style></head>
+<body><main class="app">
+<section id="money" class="page active">
+ <div class="top"><h1>記帳 <span class="ver">v2.1</span></h1><button class="iconbtn" onclick="openMoney()">＋</button></div>
+ <div class="card balance"><div class="label">本月結餘</div><div class="big" id="balance">$0</div><div class="stats"><div class="stat label">支出<b id="expense">$0</b></div><div class="stat label">收入<b id="income">$0</b></div><div class="stat label">筆數<b id="count">0</b></div></div></div>
+ <div class="card periods" id="periods"></div>
+ <div class="card">
+   <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+     <div>
+       <b>iCloud 備份</b>
+       <div class="label" style="font-size:14px;margin-top:4px">備份記帳＋加班全部資料</div>
+     </div>
+     <div style="display:flex;gap:8px">
+       <button class="smallbtn" style="font-size:15px" onclick="backupData()">備份</button>
+       <button class="smallbtn" style="font-size:15px" onclick="$('restoreFile').click()">還原</button>
+     </div>
+   </div>
+   <input id="restoreFile" type="file" accept="application/json,.json" style="display:none" onchange="restoreData(event)">
+   <div id="backupStatus" class="hint" style="margin-top:10px">備份時選「儲存到檔案」→ iCloud Drive。</div>
+ </div>
 </section>
-
-<section id="ot" class="section">
-<div class="top"><h1>加班 <span style="font-size:12px;color:#777;font-weight:500">v1.1</span></h1><div class="monthNav"><button class="iconBtn" onclick="moveMonth(-1)">‹</button><b id="monthTitle"></b><button class="iconBtn" onclick="moveMonth(1)">›</button></div></div>
-<div class="calendar" id="calendar"></div>
-<div class="summary"><div class="stat"><small>加班總時數</small><b id="totalHours">0.00 h</b></div><div class="stat"><small>加班天數</small><b id="otDays">0 天</b></div><div class="stat"><small>平均</small><b id="avgHours">0 h</b></div></div>
-<div class="card"><div class="row between"><b>加班記錄</b><span class="muted">點日期即可修改</span></div><div class="list" id="otList"></div></div>
+<section id="ledger" class="page">
+ <div class="monthHead"><button class="smallbtn" onclick="showPage('money')">‹</button><div class="monthNav"><button class="smallbtn" onclick="moveLedger(-1)">‹</button><h2 id="ledgerMonth"></h2><button class="smallbtn" onclick="moveLedger(1)">›</button></div></div>
+ <div class="card"><div class="stats"><div class="stat label">花費<b class="neg" id="lExp">$0</b></div><div class="stat label">收入<b class="pos" id="lInc">$0</b></div><div class="stat label">結餘<b id="lBal">$0</b></div></div></div>
+ <input id="search" class="search" placeholder="🔍 搜尋全部歷史紀錄：早餐、機油、luzz…" oninput="renderLedger()">
+ <div class="filter"><button class="on" data-f="all" onclick="setFilter(this)">全部</button><button data-f="expense" onclick="setFilter(this)">花費</button><button data-f="income" onclick="setFilter(this)">收入</button></div>
+ <div id="ledgerList"></div>
 </section>
-</div>
+<section id="overtime" class="page">
+ <div class="top"><h1>加班 <span class="ver">v2.1</span></h1><div class="monthNav"><button class="smallbtn" onclick="moveCal(-1)">‹</button><h2 id="calMonth"></h2><button class="smallbtn" onclick="moveCal(1)">›</button></div></div>
+ <div class="calhead"><span>週一</span><span>週二</span><span>週三</span><span>週四</span><span>週五</span><span>週六</span><span>週日</span></div><div id="calendar" class="calendar"></div>
+ <div class="summary" style="margin-top:18px"><div class="card"><span class="label">加班總時數</span><b id="otHours">0 h</b></div><div class="card"><span class="label">加班天數</span><b id="otDays">0 天</b></div><div class="card"><span class="label">請假</span><b id="leaveHours">0 h</b></div></div>
+</section>
+</main>
+<nav class="tabs"><button class="tab active" onclick="showPage('money',this)">▣<br>記帳</button><button class="tab" onclick="showPage('overtime',this)">◷<br>加班</button></nav>
 
-<div class="sheetWrap" id="otSheet" onclick="if(event.target===this)closeSheet('otSheet')"><div class="sheet">
-<div class="row between"><h2 id="sheetDate">日期</h2><button class="iconBtn" onclick="closeSheet('otSheet')">×</button></div>
-<div class="seg"><button id="typeOT" class="active" onclick="setOTType('ot')">加班</button><button id="typeLeave" onclick="setOTType('leave')">請假</button><button id="typeRest" onclick="setOTType('rest')">休息</button></div>
-<div id="hoursArea"><div class="muted" style="margin-bottom:9px">加班時數</div><div class="hoursGrid" id="hoursGrid"></div>
-<div class="field"><label>也可以直接輸入小時</label><input id="customHours" type="number" min="0" max="24" step=".5" placeholder="例如 3.5"></div></div>
-<div class="field"><label>備註</label><input id="otNote" placeholder="例如：設備維修"></div>
-<div class="row"><button class="btn danger" onclick="deleteOT()">刪除</button><button class="btn primary" style="flex:1" onclick="saveOT()">儲存</button></div>
-</div></div>
-
-<div class="sheetWrap" id="moneySheet" onclick="if(event.target===this)closeSheet('moneySheet')"><div class="sheet">
-<div class="row between"><h2>新增記帳</h2><button class="iconBtn" onclick="closeSheet('moneySheet')">×</button></div>
-<div class="kind"><button id="kExpense" class="active" onclick="setKind('expense')">支出</button><button id="kIncome" onclick="setKind('income')">收入</button></div>
-<div class="field"><label>金額</label><input id="mAmount" class="bigInput" inputmode="decimal" type="number" placeholder="0"></div>
-<div class="field"><label>分類</label><select id="mCat"><option>餐飲</option><option>交通</option><option>購物</option><option>娛樂</option><option>生活</option><option>醫療</option><option>薪資</option><option>其他</option></select></div>
+<div id="moneySheet" class="overlay" onclick="closeOnBg(event,'moneySheet')"><div class="sheet">
+<h2 id="moneyTitle">新增記帳</h2><div class="seg"><button id="mExpense" class="on" onclick="mType='expense';syncMoneyType()">花費</button><button id="mIncome" onclick="mType='income';syncMoneyType()">收入</button></div>
+<div class="field"><label>金額</label><input id="mAmount" inputmode="decimal" placeholder="0"></div>
+<div class="field"><label>分類</label><select id="mCat"><option>早餐</option><option>午餐</option><option>晚餐</option><option>飲料</option><option>交通</option><option>購物</option><option>娛樂</option><option>家庭</option><option>其他</option><option>薪資</option><option>收入</option></select></div>
 <div class="field"><label>日期</label><input id="mDate" type="date"></div>
-<div class="field"><label>備註</label><input id="mNote" placeholder="選填"></div>
-<button class="btn primary" style="width:100%" onclick="saveMoney()">儲存</button>
-</div></div>
+<div class="field"><label>備註</label><input id="mMemo" placeholder="輸入內容會提示過往紀錄" list="memoHistory"><datalist id="memoHistory"></datalist><div class="hint">會依過往備註提供快速輸入建議</div></div>
+<div class="actions"><button id="mDelete" class="delete" onclick="deleteMoney()" style="visibility:hidden">刪除</button><button class="save" onclick="saveMoney()">儲存</button></div></div></div>
 
-<nav class="tabs"><button class="tab active" data-id="money" onclick="tab('money')">▣<br>記帳</button><button class="tab" data-id="ot" onclick="tab('ot')">◷<br>加班</button></nav>
-
+<div id="otSheet" class="overlay" onclick="closeOnBg(event,'otSheet')"><div class="sheet">
+<h2 id="otTitle">日期</h2><div class="seg"><button id="otType" class="on" onclick="oType='overtime';syncOtType()">加班</button><button id="leaveType" onclick="oType='leave';syncOtType()">請假</button></div>
+<div class="field"><label>時數</label><div class="chips" id="hourChips"></div></div>
+<div class="field"><label>自訂時數</label><input id="oHours" type="number" min="0" step=".5" inputmode="decimal"></div>
+<div class="field"><label>備註</label><input id="oMemo" placeholder="選填"></div>
+<div class="actions"><button id="oDelete" class="delete" onclick="deleteOt()">刪除</button><button class="save" onclick="saveOt()">儲存</button></div></div></div>
 <script>
-const $=x=>document.getElementById(x);
-let S=JSON.parse(localStorage.getItem('shihong-ledger-ot')||'null')||{tx:[],ot:{}};
-let view=new Date(),selectedDate='',selectedHours=0,otType='ot',moneyKind='expense';
-function save(){localStorage.setItem('shihong-ledger-ot',JSON.stringify(S))}
-function keyDate(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
-function tab(id){document.querySelectorAll('.section').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.id===id));if(id==='ot')renderCal();else renderMoney()}
-function closeSheet(id){$(id).classList.remove('show')}
-function renderCal(){
- let y=view.getFullYear(),m=view.getMonth();$('monthTitle').textContent=`${y}年${m+1}月`;
- let first=new Date(y,m,1),start=(first.getDay()+6)%7,days=new Date(y,m+1,0).getDate();
- let html=['一','二','三','四','五','六','日'].map(x=>`<div class="dow">週${x}</div>`).join('');
- for(let i=0;i<start;i++)html+=`<div></div>`;
- let total=0,count=0,records=[];
- for(let d=1;d<=days;d++){let dt=new Date(y,m,d),k=keyDate(dt),r=S.ot[k],today=k===keyDate(new Date());if(r&&r.type==='ot'){total+=+r.hours||0;if(+r.hours>0)count++;records.push([k,r])}
- let sub=r?(r.type==='ot'?`${r.hours||0}h`:r.type==='leave'?'請假':'休'):'';
- html+=`<button class="day ${today?'today':''}" onclick="openOT('${k}')"><span class="dot"></span><span class="num">${d}</span>${sub?`<span class="hours ${r.type!=='ot'?'leave':''}">${sub}</span>`:''}</button>`}
- $('calendar').innerHTML=html;$('totalHours').textContent=total.toFixed(2)+' h';$('otDays').textContent=count+' 天';$('avgHours').textContent=(count?total/count:0).toFixed(1)+' h';
- $('otList').innerHTML=records.length?records.reverse().map(([k,r])=>`<div class="item" onclick="openOT('${k}')"><div><b>${k.slice(5).replace('-','/')}</b><div class="muted">${r.note||'加班'}</div></div><b style="color:var(--blue)">${r.hours} h ›</b></div>`).join(''):'<div class="muted" style="padding:16px 0">本月還沒有加班紀錄。</div>';
+const $=id=>document.getElementById(id), moneyKey='shihong-money-v2', otKey='shihong-ot-v2';
+let money=JSON.parse(localStorage.getItem(moneyKey)||'[]'), ots=JSON.parse(localStorage.getItem(otKey)||'{}');
+let now=new Date(), ledgerDate=new Date(now.getFullYear(),now.getMonth(),1), calDate=new Date(now.getFullYear(),now.getMonth(),1), filter='all', mType='expense', editMoney=null, editOtDate=null,oType='overtime';
+const fmt=n=>'$'+Math.round(n).toLocaleString('zh-TW'), ymd=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+function showPage(id,btn){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));if(btn)btn.classList.add('active');else if(id==='money')document.querySelectorAll('.tab')[0].classList.add('active');renderAll()}
+function monthRows(y,m){return money.filter(x=>{let d=new Date(x.date+'T00:00:00');return d.getFullYear()==y&&d.getMonth()==m})}
+function sums(rows){let e=0,i=0;rows.forEach(x=>x.type==='expense'?e+=+x.amount:i+=+x.amount);return[e,i]}
+function renderMoney(){
+ let r=monthRows(now.getFullYear(),now.getMonth()),[e,i]=sums(r);$('balance').textContent=fmt(i-e);$('expense').textContent=fmt(e);$('income').textContent=fmt(i);$('count').textContent=r.length;
+ let today=ymd(now),yd=new Date(now);yd.setDate(now.getDate()-1);let yesterday=ymd(yd);let start=new Date(now);let dow=(now.getDay()+6)%7;start.setDate(now.getDate()-dow);
+ let defs=[['今天',x=>x.date===today],['昨天',x=>x.date===yesterday],['本週',x=>new Date(x.date+'T00:00:00')>=new Date(start.getFullYear(),start.getMonth(),start.getDate())&&new Date(x.date+'T00:00:00')<=now],['本月',x=>r.includes(x)]];
+ $('periods').innerHTML=defs.map(([n,f],idx)=>{let rr=money.filter(f),[ee,ii]=sums(rr);return `<div class="row" ${idx===3?'onclick="openLedger()"':''}><b>${n}</b><span class="neg">-${fmt(ee).slice(1)}</span><span class="pos">+${fmt(ii).slice(1)}</span></div>`}).join('');
+ let memos=[...new Set(money.map(x=>x.memo).filter(Boolean))];$('memoHistory').innerHTML=memos.map(x=>`<option value="${x.replaceAll('"','&quot;')}">`).join('')
 }
-function moveMonth(n){view=new Date(view.getFullYear(),view.getMonth()+n,1);renderCal()}
-function openOT(k){selectedDate=k;let r=S.ot[k]||{type:'ot',hours:0,note:''};otType=r.type;selectedHours=+r.hours||0;$('sheetDate').textContent=k.replaceAll('-',' / ');$('otNote').value=r.note||'';$('customHours').value=selectedHours||'';setOTType(otType);renderHours();$('otSheet').classList.add('show')}
-function setOTType(t){otType=t;$('typeOT').classList.toggle('active',t==='ot');$('typeLeave').classList.toggle('active',t==='leave');$('typeRest').classList.toggle('active',t==='rest');$('hoursArea').style.display=t==='ot'?'block':'none'}
-function renderHours(){let vals=[0,.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,6,7,8,9,10,11,12];$('hoursGrid').innerHTML=vals.map(v=>`<button class="${selectedHours===v?'active':''}" onclick="selectedHours=${v};$('customHours').value='${v}';renderHours()">${v}</button>`).join('')}
-function saveOT(){let h=+$('customHours').value||0;S.ot[selectedDate]={type:otType,hours:otType==='ot'?h:0,note:$('otNote').value.trim()};save();closeSheet('otSheet');renderCal()}
-function deleteOT(){delete S.ot[selectedDate];save();closeSheet('otSheet');renderCal()}
-function openMoney(){$('mDate').value=keyDate(new Date());$('mAmount').value='';$('mNote').value='';$('moneySheet').classList.add('show')}
-function setKind(k){moneyKind=k;$('kExpense').classList.toggle('active',k==='expense');$('kIncome').classList.toggle('active',k==='income')}
-function saveMoney(){let amount=+$('mAmount').value;if(!amount)return alert('請輸入金額');S.tx.push({id:Date.now(),kind:moneyKind,amount,cat:$('mCat').value,date:$('mDate').value,note:$('mNote').value.trim()});save();closeSheet('moneySheet');renderMoney()}
-function delTx(id){if(confirm('刪除這筆紀錄？')){S.tx=S.tx.filter(x=>x.id!==id);save();renderMoney()}}
-function renderMoney(){let now=new Date(),ym=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0'),arr=S.tx.filter(x=>x.date.startsWith(ym)).sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id),e=arr.filter(x=>x.kind==='expense').reduce((a,b)=>a+b.amount,0),inc=arr.filter(x=>x.kind==='income').reduce((a,b)=>a+b.amount,0);$('balance').textContent='$'+(inc-e).toLocaleString();$('expense').textContent='$'+e.toLocaleString();$('income').textContent='$'+inc.toLocaleString();$('txCount').textContent=arr.length;$('moneyMonth').textContent=`${now.getFullYear()}年${now.getMonth()+1}月`;$('txList').innerHTML=arr.length?arr.map(x=>`<div class="item" onclick="delTx(${x.id})"><div><b>${x.cat}</b><div class="muted">${x.date.slice(5).replace('-','/')} ${x.note||''}</div></div><b style="color:${x.kind==='expense'?'var(--red)':'var(--green)'}">${x.kind==='expense'?'-':'+'}$${x.amount.toLocaleString()}</b></div>`).join(''):'<div class="muted" style="padding:16px 0">本月還沒有記帳紀錄。</div>'}
-renderMoney();renderCal();
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('./sw.js').then(reg=>{
-    reg.update().catch(()=>{});
-    navigator.serviceWorker.addEventListener('controllerchange',()=>{
-      if(!sessionStorage.getItem('reloaded-v1-1')){
-        sessionStorage.setItem('reloaded-v1-1','1');
-        location.reload();
-      }
-    });
-  }).catch(()=>{});
+function openLedger(){ledgerDate=new Date(now.getFullYear(),now.getMonth(),1);showPage('ledger');renderLedger()} function moveLedger(n){ledgerDate.setMonth(ledgerDate.getMonth()+n);renderLedger()}
+function setFilter(b){document.querySelectorAll('.filter button').forEach(x=>x.classList.remove('on'));b.classList.add('on');filter=b.dataset.f;renderLedger()}
+function renderLedger(){
+ let q=$('search').value.trim().toLowerCase(), global=q.length>0, rows=global?money.slice():monthRows(ledgerDate.getFullYear(),ledgerDate.getMonth());if(filter!=='all')rows=rows.filter(x=>x.type===filter);
+ if(q)rows=rows.filter(x=>`${x.category} ${x.memo||''} ${x.amount} ${x.date}`.toLowerCase().includes(q));rows.sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id);
+ $('ledgerMonth').textContent=global?'搜尋結果':`${ledgerDate.getFullYear()}年${ledgerDate.getMonth()+1}月`;let sr=monthRows(ledgerDate.getFullYear(),ledgerDate.getMonth()),[e,i]=sums(sr);$('lExp').textContent='-'+fmt(e);$('lInc').textContent='+'+fmt(i);$('lBal').textContent=fmt(i-e);
+ let groups={};rows.forEach(x=>(groups[x.date]??=[]).push(x));$('ledgerList').innerHTML=Object.keys(groups).map(d=>`<div class="daygroup"><div class="daytitle">${d.replaceAll('-',' / ')}</div>${groups[d].map(x=>`<div class="tx"><button onclick="editMoneyItem(${x.id})"><b>${x.category}</b><div class="memo">${x.memo||''}</div></button><div class="amount ${x.type==='expense'?'neg':'pos'}">${x.type==='expense'?'-':'+'}${fmt(x.amount)}</div></div>`).join('')}</div>`).join('')||'<div class="card label">沒有符合的紀錄。</div>'
 }
+function openMoney(id=null){editMoney=id;let x=id?money.find(a=>a.id===id):null;mType=x?.type||'expense';syncMoneyType();$('moneyTitle').textContent=x?'修改紀錄':'新增記帳';$('mAmount').value=x?.amount||'';$('mCat').value=x?.category||'其他';$('mDate').value=x?.date||ymd(now);$('mMemo').value=x?.memo||'';$('mDelete').style.visibility=x?'visible':'hidden';$('moneySheet').classList.add('show')}
+function editMoneyItem(id){openMoney(id)} function syncMoneyType(){$('mExpense').classList.toggle('on',mType==='expense');$('mIncome').classList.toggle('on',mType==='income')}
+function saveMoney(){let a=parseFloat($('mAmount').value);if(!(a>0))return alert('請輸入金額');let obj={id:editMoney||Date.now(),type:mType,amount:a,category:$('mCat').value,date:$('mDate').value,memo:$('mMemo').value.trim()};if(editMoney)money=money.map(x=>x.id===editMoney?obj:x);else money.push(obj);localStorage.setItem(moneyKey,JSON.stringify(money));$('moneySheet').classList.remove('show');renderAll()}
+function deleteMoney(){if(!editMoney)return;money=money.filter(x=>x.id!==editMoney);localStorage.setItem(moneyKey,JSON.stringify(money));$('moneySheet').classList.remove('show');renderAll()}
+function moveCal(n){calDate.setMonth(calDate.getMonth()+n);renderCal()}
+function renderCal(){let y=calDate.getFullYear(),m=calDate.getMonth();$('calMonth').textContent=`${y}年${m+1}月`;let first=new Date(y,m,1),days=new Date(y,m+1,0).getDate(),offset=(first.getDay()+6)%7,s='';for(let i=0;i<offset;i++)s+='<div></div>';let oh=0,od=0,lh=0;
+ for(let d=1;d<=days;d++){let date=ymd(new Date(y,m,d)),x=ots[date];if(x?.type==='overtime'){oh+=+x.hours;od++}if(x?.type==='leave')lh+=+x.hours;let today=date===ymd(now);s+=`<button class="day ${today?'today':''}" onclick="openOt('${date}')"><div class="dot">●</div><div class="num">${d}</div>${x?`<div class="${x.type==='leave'?'leave':'ot'}">${x.type==='leave'?'請假 '+x.hours+'h':x.hours+'h'}</div>`:''}</button>`}
+ $('calendar').innerHTML=s;$('otHours').textContent=oh.toFixed(1)+' h';$('otDays').textContent=od+' 天';$('leaveHours').textContent=lh.toFixed(1)+' h'}
+function openOt(date){editOtDate=date;let x=ots[date];oType=x?.type||'overtime';syncOtType();$('otTitle').textContent=date;$('oHours').value=x?.hours??'';$('oMemo').value=x?.memo||'';$('oDelete').style.visibility=x?'visible':'hidden';document.querySelectorAll('#hourChips button').forEach(b=>b.classList.toggle('on',+b.dataset.h===+(x?.hours||-1)));$('otSheet').classList.add('show')}
+function syncOtType(){$('otType').classList.toggle('on',oType==='overtime');$('leaveType').classList.toggle('on',oType==='leave')}
+function saveOt(){let h=parseFloat($('oHours').value);if(!(h>=0))return alert('請選擇或輸入時數');ots[editOtDate]={type:oType,hours:h,memo:$('oMemo').value.trim()};localStorage.setItem(otKey,JSON.stringify(ots));$('otSheet').classList.remove('show');renderCal()}
+function deleteOt(){delete ots[editOtDate];localStorage.setItem(otKey,JSON.stringify(ots));$('otSheet').classList.remove('show');renderCal()}
+function closeOnBg(e,id){if(e.target.id===id)$(id).classList.remove('show')} function renderAll(){renderMoney();renderLedger();renderCal()}
+$('hourChips').innerHTML=[0,.5,1,1.5,2,2.5,3,3.5,4,5,6,8,10,12].map(h=>`<button data-h="${h}" onclick="$('oHours').value='${h}';document.querySelectorAll('#hourChips button').forEach(x=>x.classList.remove('on'));this.classList.add('on')">${h}</button>`).join('');
+
+async function backupData(){
+  const payload={app:"記帳・加班",version:"2.1",exportedAt:new Date().toISOString(),money,overtime:ots};
+  const text=JSON.stringify(payload,null,2);
+  const filename=`記帳加班備份_${new Date().toISOString().slice(0,10)}.json`;
+  const blob=new Blob([text],{type:"application/json"});
+  const file=new File([blob],filename,{type:"application/json"});
+  try{
+    if(navigator.canShare && navigator.canShare({files:[file]})){
+      await navigator.share({files:[file],title:"記帳・加班備份"});
+      $('backupStatus').textContent='已開啟 iOS 分享選單；請選「儲存到檔案」並存到 iCloud Drive。';
+    }else{
+      const a=document.createElement('a');
+      a.href=URL.createObjectURL(blob);
+      a.download=filename;
+      a.click();
+      setTimeout(()=>URL.revokeObjectURL(a.href),1500);
+      $('backupStatus').textContent='已產生備份檔；請在「檔案」App 移到 iCloud Drive。';
+    }
+  }catch(e){
+    if(e && e.name!=='AbortError') $('backupStatus').textContent='備份未完成，請再試一次。';
+  }
+}
+async function restoreData(ev){
+  const file=ev.target.files && ev.target.files[0];
+  if(!file) return;
+  try{
+    const text=await file.text();
+    const data=JSON.parse(text);
+    if(!Array.isArray(data.money) || !data.overtime || typeof data.overtime!=='object') throw new Error('invalid');
+    const ok=confirm(`要還原此備份嗎？\n記帳 ${data.money.length} 筆，加班/請假 ${Object.keys(data.overtime).length} 天。\n目前資料會被覆蓋。`);
+    if(!ok){ ev.target.value=''; return; }
+    money=data.money;
+    ots=data.overtime;
+    localStorage.setItem(moneyKey,JSON.stringify(money));
+    localStorage.setItem(otKey,JSON.stringify(ots));
+    $('backupStatus').textContent='還原完成。';
+    renderAll();
+  }catch(e){
+    alert('這不是有效的「記帳・加班」備份檔。');
+  }
+  ev.target.value='';
+}
+
+renderAll();
+if('serviceWorker'in navigator){navigator.serviceWorker.register('./sw.js').then(r=>r.update()).catch(()=>{})}
 </script></body></html>
